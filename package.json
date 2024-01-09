@@ -2,7 +2,7 @@
   "name": "bumbread-cursor-util",
   "displayName": "bumbread-cursor-util",
   "description": "Bumbread's multicursor real estate",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "engines": {
     "vscode": "^1.85.0"
   },
