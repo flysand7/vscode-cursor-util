@@ -1,7 +1,7 @@
 {
-  "name": "better-insert-numbers",
-  "displayName": "better-insert-numbers",
-  "description": "Insert numbers at multicursors",
+  "name": "bumbread-cursor-util",
+  "displayName": "bumbread-cursor-util",
+  "description": "Bumbread's multicursor real estate",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.85.0"
@@ -19,7 +19,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "better-insert-numbers.insert-numbers",
+        "command": "cursor-util.insert-numbers",
         "title": "Insert Numbers"
       }
     ]
