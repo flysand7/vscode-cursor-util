@@ -103,82 +103,98 @@ async function insert_numbers(): Promise<void> {
 	};
 }
 
-async function find_forwards(): Promise<void> {
-	const editor = vscode.window.activeTextEditor;
-	if(editor === undefined) {
-		return;
-	}
-	const char = await vscode.window.showInputBox(
-		{
-			prompt: ',',
-			value: ',',
-			title: "Enter the character",
-		},
-	);
-	if(char === undefined) {
-		return;
-	}
-	const cursors = editor.selections;
-	const new_cursors: vscode.Selection[] = [];
-	for(const cursor of cursors) {
-		let new_position: vscode.Position|undefined = undefined;
-		const line_no = cursor.anchor.line;
-		const column = cursor.anchor.character;
-		const line = editor.document.lineAt(line_no).text;
-		for(let pos = column+1; pos < line.length; pos += 1) {
-			if(line[pos] === char) {
-				new_position = new vscode.Position(line_no, pos);
-				break;
+function find_forwards(do_select: boolean): (...args: any[])=>any {
+	return async function(): Promise<void> {
+		const editor = vscode.window.activeTextEditor;
+		if(editor === undefined) {
+			return;
+		}
+		const char = await vscode.window.showInputBox(
+			{
+				prompt: ',',
+				value: ',',
+				title: "Enter the character",
+			},
+		);
+		if(char === undefined) {
+			return;
+		}
+		const cursors = editor.selections;
+		const new_cursors: vscode.Selection[] = [];
+		for(const cursor of cursors) {
+			let new_position: vscode.Position|undefined = undefined;
+			const line_no = cursor.anchor.line;
+			const column = cursor.anchor.character;
+			const line = editor.document.lineAt(line_no).text;
+			for(let pos = column+1; pos < line.length; pos += 1) {
+				if(line[pos] === char) {
+					new_position = new vscode.Position(line_no, pos);
+					break;
+				}
+			}
+			if(new_position !== undefined) {
+				if(do_select) {
+					new_cursors.push(new vscode.Selection(
+						cursor.anchor,
+						new_position.with(undefined, new_position.character+1),
+					));
+				} else {
+					new_cursors.push(new vscode.Selection(
+						new_position,
+						new_position.with(undefined, new_position.character+1),
+					));
+				}
 			}
 		}
-		if(new_position !== undefined) {
-			const new_cursor = new vscode.Selection(
-				new_position,
-				new_position.with(undefined, new_position.character+1),
-			);
-			new_cursors.push(new_cursor);
-		}
-	}
-	editor.selections = new_cursors;
+		editor.selections = new_cursors;
+	};
 }
 
-async function find_backwards(): Promise<void> {
-	const editor = vscode.window.activeTextEditor;
-	if(editor === undefined) {
-		return;
-	}
-	const char = await vscode.window.showInputBox(
-		{
-			prompt: ',',
-			value: ',',
-			title: "Enter the character",
-		},
-	);
-	if(char === undefined) {
-		return;
-	}
-	const cursors = editor.selections;
-	const new_cursors: vscode.Selection[] = [];
-	for(const cursor of cursors) {
-		let new_position: vscode.Position|undefined = undefined;
-		const line_no = cursor.anchor.line;
-		const column = cursor.anchor.character;
-		const line = editor.document.lineAt(line_no).text;
-		for(let pos = column-1; pos >= 0; pos -= 1) {
-			if(line[pos] === char) {
-				new_position = new vscode.Position(line_no, pos);
-				break;
+function find_backwards(do_select: boolean): (...args: any[])=>any {
+	return async function(): Promise<void> {
+		const editor = vscode.window.activeTextEditor;
+		if(editor === undefined) {
+			return;
+		}
+		const char = await vscode.window.showInputBox(
+			{
+				prompt: ',',
+				value: ',',
+				title: "Enter the character",
+			},
+		);
+		if(char === undefined) {
+			return;
+		}
+		const cursors = editor.selections;
+		const new_cursors: vscode.Selection[] = [];
+		for(const cursor of cursors) {
+			let new_position: vscode.Position|undefined = undefined;
+			const line_no = cursor.anchor.line;
+			const column = cursor.anchor.character;
+			const line = editor.document.lineAt(line_no).text;
+			for(let pos = column-1; pos >= 0; pos -= 1) {
+				if(line[pos] === char) {
+					new_position = new vscode.Position(line_no, pos);
+					break;
+				}
+			}
+			if(new_position !== undefined) {
+				if(do_select) {
+					new_cursors.push(new vscode.Selection(
+						cursor.anchor,
+						new_position.with(undefined, new_position.character+1),
+					));
+				} else {
+					new_cursors.push(new vscode.Selection(
+						new_position,
+						new_position.with(undefined, new_position.character+1),
+					));
+				}
 			}
 		}
-		if(new_position !== undefined) {
-			const new_cursor = new vscode.Selection(
-				new_position,
-				new_position.with(undefined, new_position.character+1),
-			);
-			new_cursors.push(new_cursor);
-		}
-	}
-	editor.selections = new_cursors;
+		editor.selections = new_cursors;
+	};
 }
 
 async function merge_selections(): Promise<void> {
@@ -291,8 +307,10 @@ function move_matching(chr_kind: string): (...args: any[])=>any {
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.insert-numbers', insert_numbers));
-	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.find-forwards', find_forwards));
-	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.find-backwards', find_backwards));
+	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.find-forwards', find_forwards(false)));
+	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.find-backwards', find_backwards(false)));
+	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.find-forwards-select', find_forwards(true)));
+	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.find-backwards-select', find_backwards(true)));
 	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.merge-selections', merge_selections));
 	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.move-matching-parens', move_matching(')')));
 	context.subscriptions.push(vscode.commands.registerCommand('cursor-util.move-matching-braces', move_matching('}')));

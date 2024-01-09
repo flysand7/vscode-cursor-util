@@ -20,15 +20,23 @@
     "commands": [
       {
         "command": "cursor-util.insert-numbers",
-        "title": "Cursor Util: Insert Numbers"
+        "title": "Cursor Util: Insert numbers at multicursor."
       },
       {
         "command": "cursor-util.find-forwards",
-        "title": "Cursor Util: find next substring"
+        "title": "Cursor Util: Find next character."
       },
       {
         "command": "cursor-util.find-backwards",
-        "title": "Cursor Util: Find previous substring."
+        "title": "Cursor Util: Find previous character."
+      },
+      {
+        "command": "cursor-util.find-forwards-select",
+        "title": "Cursor Util: Find and select until next character."
+      },
+      {
+        "command": "cursor-util.find-backwards-select",
+        "title": "Cursor Util: Find and select until previous character."
       },
       {
         "command": "cursor-util.merge-selections",
