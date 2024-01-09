@@ -1,17 +1,26 @@
 import * as vscode from 'vscode';
 
-function number_to_format(n: number, format: string): string {
+function number_to_format(n: number, format: string, padding: number): string {
+	let str: string;
 	switch(format) {
-		case 'b': return n.toString(2);
-		case 'o': return n.toString(8);
-		case 'd': return n.toString(10);
-		case 'x': return n.toString(16);
+		case 'b': str = n.toString(2); break;
+		case 'o': str = n.toString(8); break;
+		case 'd': str = n.toString(10); break;
+		case 'x': str = n.toString(16); break;
+		default:  str = n.toString();
 	}
-	return n.toString();
+	return str.padStart(padding, '0');
 }
 
 function parse_range(s: string): [number, number, boolean] {
 	const colon_pos = s.indexOf(':');
+	if(colon_pos === -1) {
+		const n = Number.parseInt(s, 10);
+		if(isNaN(n)) {
+			return [0, 0, false];
+		}
+		return [n, 1, true];
+	}
 	const a0 = s.slice(0, colon_pos);
 	const a1 = s.slice(colon_pos+1);
 	const n0 = Number.parseInt(a0, 10);
@@ -44,6 +53,21 @@ async function insert_numbers(): Promise<void> {
 			title: "Enter the range",
 		},
 	);
+	const padding_str = await vscode.window.showInputBox(
+		{
+			prompt: '1',
+			value: '1',
+			title: "Enter the zero-padding",
+		},
+	);
+	if(padding_str === undefined) {
+		return;
+	}
+	const padding = Number.parseInt(padding_str, 10);
+	if(isNaN(padding)) {
+		vscode.window.showErrorMessage("Invalid format for padding");
+		return;
+	}
 	const range_str = range ?? '0:1';
 	const [range_start, range_inc, range_ok] = parse_range(range_str);
 	if(!range_ok) {
@@ -62,7 +86,7 @@ async function insert_numbers(): Promise<void> {
 		let selection_idx = 0;
 		for(const selection of selections) {
 			const selection_range = new vscode.Range(selection.anchor, selection.active);
-			const insertion = number_to_format(start, format);
+			const insertion = number_to_format(start, format, padding);
 			const position = selection.anchor.with();
 			const selection_col = position.character + insertion.length;
 			const selection_end = position.with(undefined, selection_col);
