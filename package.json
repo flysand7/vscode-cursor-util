@@ -2,7 +2,7 @@
   "name": "bumbread-cursor-util",
   "displayName": "bumbread-cursor-util",
   "description": "Bumbread's multicursor real estate",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -20,7 +20,31 @@
     "commands": [
       {
         "command": "cursor-util.insert-numbers",
-        "title": "Insert Numbers"
+        "title": "Cursor Util: Insert Numbers"
+      },
+      {
+        "command": "cursor-util.find-forwards",
+        "title": "Cursor Util: find next substring"
+      },
+      {
+        "command": "cursor-util.find-backwards",
+        "title": "Cursor Util: Find previous substring."
+      },
+      {
+        "command": "cursor-util.merge-selections",
+        "title": "Cursor Util: Merge the selections into one selection."
+      },
+      {
+        "command": "cursor-util.move-matching-braces",
+        "title": "Cursor Util: Move the cursor between matching braces."
+      },
+      {
+        "command": "cursor-util.move-matching-brackets",
+        "title": "Cursor Util: Move the cursor between matching brackets."
+      },
+      {
+        "command": "cursor-util.move-matching-parens",
+        "title": "Cursor Util: Move the cursor between matching parens."
       }
     ]
   },
