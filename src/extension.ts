@@ -102,7 +102,6 @@ async function find_forwards(): Promise<void> {
 		const column = cursor.anchor.character;
 		const line = editor.document.lineAt(line_no).text;
 		for(let pos = column+1; pos < line.length; pos += 1) {
-			console.log(line[pos]);
 			if(line[pos] === char) {
 				new_position = new vscode.Position(line_no, pos);
 				break;
@@ -141,8 +140,7 @@ async function find_backwards(): Promise<void> {
 		const line_no = cursor.anchor.line;
 		const column = cursor.anchor.character;
 		const line = editor.document.lineAt(line_no).text;
-		for(let pos = column; pos >= 0; pos -= 1) {
-			console.log(line[pos]);
+		for(let pos = column-1; pos >= 0; pos -= 1) {
 			if(line[pos] === char) {
 				new_position = new vscode.Position(line_no, pos);
 				break;
@@ -219,7 +217,6 @@ function move_matching(chr_kind: string): (...args: any[])=>any {
 				find_set = [reverse_chr(chr_kind)];
 				find_fwd = false;
 			}
-			console.log(chr_kind, find_set, find_fwd);
 			let col = pos.character;
 			let found = false;
 			let line_no = pos.line;
